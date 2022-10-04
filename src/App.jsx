@@ -17,6 +17,7 @@ class App extends Component {
     loading: false,
     showModal: false,
     modalData: {},
+    totalPages: null,
   };
 
   async componentDidUpdate(_, prevState) {
@@ -25,10 +26,14 @@ class App extends Component {
 
       try {
         const data = await fetchImages(this.state.q, this.state.page);
+        console.log(data);
         this.setState(prevState => {
           return {
             images: [...prevState.images, ...data.hits],
             loading: false,
+            // totalPages: Math.ceil(data.totalHits / 12),
+            // totalPages: data.hits.length,
+            totalPages: data.total,
           };
         });
       } catch (error) {
@@ -39,7 +44,7 @@ class App extends Component {
   }
 
   onSearch = q => {
-    this.setState({ q, page: 1 });
+    this.setState({ q, page: 1, images: [] });
   };
 
   onLoadMore = () => {
@@ -63,14 +68,17 @@ class App extends Component {
   };
 
   render() {
-    const { images, loading, showModal, modalData } = this.state;
+    const { images, loading, showModal, modalData, totalPages } = this.state;
     const { onSearch, toggleModal, onLoadMore, closeModal } = this;
     // console.log(modalData);
+    // console.log(images);
     return (
       <>
         <Searchbar onSearch={onSearch} />
         <ImageGallery images={images} openModal={toggleModal} />
-        {!!images.length && <Button onClick={onLoadMore} />}
+        {images.length && images.length < totalPages && (
+          <Button onClick={onLoadMore} />
+        )}
         {loading && <Oval width={200} />}
         {showModal && <Modal data={modalData} closeModal={closeModal} />}
       </>
@@ -78,3 +86,5 @@ class App extends Component {
   }
 }
 export default App;
+
+// !!images.length
