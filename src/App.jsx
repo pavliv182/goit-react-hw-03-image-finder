@@ -76,7 +76,7 @@ class App extends Component {
       <>
         <Searchbar onSearch={onSearch} />
         <ImageGallery images={images} openModal={toggleModal} />
-        {images.length && images.length < totalPages && (
+        {!!images.length && images.length < totalPages && (
           <Button onClick={onLoadMore} />
         )}
         {loading && <Oval width={200} />}
